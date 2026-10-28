@@ -102,7 +102,7 @@ uvicorn main:app --host 127.0.0.1 --port 8000
 
 ---
 
-## ⚔️ Seminar Attack Demonstrations
+## ⚔️  Attack Demonstrations
 
 Use the **Attack Simulator** inside the `/soc` dashboard, or manually test these payloads on the Victim login page.
 
