@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudDatabaseGuard SOC Console | Topic 21 Seminar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --text: #f9fafb;
+      --text-muted: #9ca3af;
+      --code-bg: #030712;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Top Navigation Bar */
+    .top-navbar {
+      background: rgba(17, 24, 39, 0.95);
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 0 1.5rem;
+    }
+    .nav-container {
+      max-width: 1350px;
+      margin: 0 auto;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+    .brand-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      background: #030712;
+      padding: 0.3rem;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      border-radius: 7px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .public-link {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #93c5fd;
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      background: rgba(59, 130, 246, 0.1);
+      transition: all 0.15s;
+    }
+    .public-link:hover {
+      background: rgba(59, 130, 246, 0.2);
+    }
+
+    /* Main Container */
+    .main-content {
+      max-width: 1350px;
+      width: 100%;
+      margin: 1.75rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+    }
+    .tab-section {
+      display: none;
+    }
+    .tab-section.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Toggle Switch */
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #030712;
+      border: 1px solid var(--card-border);
+      padding: 1.25rem 1.5rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 58px;
+      height: 30px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ef4444;
+      transition: .3s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #10b981;
+    }
+    input:checked + .slider:before {
+      transform: translateX(28px);
+    }
+
+    /* Attack Simulator */
+    .presets-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+    @media (max-width: 900px) {
+      .presets-grid { grid-template-columns: 1fr; }
+    }
+    .preset-card {
+      background: #030712;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.15s;
+    }
+    .preset-card:hover {
+      border-color: #3b82f6;
+    }
+    .btn-fire {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.65rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.825rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: opacity 0.15s;
+    }
+    .btn-fire-danger { background: #ef4444; color: white; }
+    .btn-fire-warning { background: #f59e0b; color: white; }
+    .btn-fire-purple { background: #8b5cf6; color: white; }
+    .btn-fire:hover { opacity: 0.9; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th, td {
+      padding: 0.85rem 1.15rem;
+      text-align: left;
+      border-bottom: 1px solid var(--card-border);
+    }
+    th {
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .badge-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      display: inline-block;
+    }
+    .badge-blocked { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .badge-passed { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .btn-sm {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.775rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      background: #030712;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .btn-sm:hover { background: rgba(255, 255, 255, 0.05); }
+    .result-console {
+      background: #030712;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      margin-top: 1rem;
+      min-height: 70px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation Bar (Strict 4 Tabs) -->
+  <header class="top-navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon">🛡️</div>
+        <div>
+          <span class="brand-title">CloudDatabaseGuard SOC</span>
+          <span class="brand-tag">Topic 21 Seminar PoC</span>
+        </div>
+      </div>
+
+      <!-- 4 Tabs in Top Bar -->
+      <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('control')">
+          <span>⚙️</span>
+          <span>Control Center</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('threats')">
+          <span>📡</span>
+          <span>Threat Logs</span>
+          <span id="log-count-badge" style="font-size: 0.7rem; background: #ef4444; color: white; padding: 0.1rem 0.4rem; border-radius: 9999px;">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('simulator')">
+          <span>🎯</span>
+          <span>Attack Simulator</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('database')">
+          <span>🗄️</span>
+          <span>Database Inspector</span>
+        </button>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="/" target="_blank" class="public-link">Open Victim Website ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- TAB 1: CONTROL CENTER -->
+    <section id="tab-control" class="tab-section active">
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.35rem;">AI Security Middleware Control Center</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">
+          Manage the active state of <code>CloudDatabaseGuard</code> interception pipeline protecting <code>vulnerable_cloud_db.sqlite</code>.
+        </p>
+
+        <div class="toggle-container">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #ffffff;" id="guard-status-text">
+              Middleware Protection: ACTIVE
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem;" id="guard-status-sub">
+              TF-IDF Tokenizer & Logistic Regression AST interceptor active before SQLite execution.
+            </p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <span id="status-pill" class="badge-pill badge-passed">GUARD ONLINE</span>
+            <label class="switch">
+              <input type="checkbox" id="guard-toggle" checked onchange="toggleGuard()">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;">
+          <div style="background: #030712; padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Inference Model</div>
+            <div style="font-size: 1rem; font-weight: 700; margin-top: 0.25rem;">TF-IDF + Logistic Reg.</div>
+          </div>
+          <div style="background: #030712; padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Average Intercept Latency</div>
+            <div style="font-size: 1rem; font-weight: 700; color: #60a5fa; margin-top: 0.25rem;">&lt; 1.85 ms</div>
+          </div>
+          <div style="background: #030712; padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Protected Target Tables</div>
+            <div style="font-size: 1rem; font-weight: 700; color: #34d399; margin-top: 0.25rem;">`users`, `admins`</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: THREAT LOGS -->
+    <section id="tab-threats" class="tab-section">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 700;">Security Audit &amp; Threat Telemetry</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Live forensic events recorded in <code>security_audit.json</code></p>
+          </div>
+          <button class="btn-sm" onclick="loadLogs()">🔄 Refresh Feed</button>
+        </div>
+
+        <div style="overflow-x: auto; border: 1px solid var(--card-border); border-radius: 8px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Status</th>
+                <th>Threat Classification</th>
+                <th>Intercepted Payload</th>
+                <th>Risk Score %</th>
+                <th>Latency</th>
+              </tr>
+            </thead>
+            <tbody id="logs-table-body">
+              <tr>
+                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading threat records...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: ATTACK SIMULATOR (TEST BUTTONS) -->
+    <section id="tab-simulator" class="tab-section">
+      <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.35rem;">Automated Attack Vector Simulator</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">
+          Click the preset attack buttons to launch real SQL injection requests against the Victim Website's <code>POST /login</code> route without typing.
+        </p>
+
+        <div class="presets-grid">
+          <!-- Preset 1: Tautology -->
+          <div class="preset-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong style="color: #f87171; font-size: 0.9rem;">1. Tautology Auth Bypass</strong>
+                <span class="badge-pill" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">Auth Bypass</span>
+              </div>
+              <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0.5rem 0;">
+                Forces boolean logic to true (<code>OR 1=1</code>) to hijack the first user session.
+              </p>
+              <div class="mono" style="background: #000; padding: 0.4rem; border-radius: 4px; font-size: 0.75rem; color: #fca5a5;">
+                admin' OR 1=1 --
+              </div>
+            </div>
+            <button class="btn-fire btn-fire-danger" onclick="fireAttack('admin\' OR 1=1 --', 'any')">
+              ⚡ Launch Tautology Attack
+            </button>
+          </div>
+
+          <!-- Preset 2: UNION Exfiltration -->
+          <div class="preset-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong style="color: #fbbf24; font-size: 0.9rem;">2. UNION Exfiltration (`admins`)</strong>
+                <span class="badge-pill" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">Table Leak</span>
+              </div>
+              <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0.5rem 0;">
+                Dumps the secret <code>admins</code> table containing super_privilege API secrets.
+              </p>
+              <div class="mono" style="background: #000; padding: 0.4rem; border-radius: 4px; font-size: 0.75rem; color: #fcd34d;">
+                ' UNION SELECT id, username, password, super_privilege FROM admins --
+              </div>
+            </div>
+            <button class="btn-fire btn-fire-warning" onclick="fireAttack('\' UNION SELECT id, username, password, super_privilege FROM admins --', 'any')">
+              🕵️ Launch UNION Exfiltration
+            </button>
+          </div>
+
+          <!-- Preset 3: Stacked DDL -->
+          <div class="preset-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong style="color: #c084fc; font-size: 0.9rem;">3. Stacked Destructive DDL</strong>
+                <span class="badge-pill" style="background: rgba(192, 132, 252, 0.15); color: #c084fc;">DROP TABLE</span>
+              </div>
+              <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0.5rem 0;">
+                Appends stacked statement to drop the entire <code>users</code> table from SQLite.
+              </p>
+              <div class="mono" style="background: #000; padding: 0.4rem; border-radius: 4px; font-size: 0.75rem; color: #e9d5ff;">
+                '; DROP TABLE users; --
+              </div>
+            </div>
+            <button class="btn-fire btn-fire-purple" onclick="fireAttack('\'; DROP TABLE users; --', 'any')">
+              💣 Launch Stacked DDL Attack
+            </button>
+          </div>
+        </div>
+
+        <div class="result-console" id="simulator-console">
+          <span style="color: #6b7280;">Console Output: Ready. Click any preset attack above.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: DATABASE INSPECTOR -->
+    <section id="tab-database" class="tab-section">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 700;">Database Integrity Inspector</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Inspect <code>users</code> and <code>admins</code> tables to verify data protection.</p>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn-sm" onclick="loadDbData()">🔄 Refresh Tables</button>
+            <button class="btn-sm" style="color: #f87171;" onclick="resetDb()">⚠️ Reset Database to Clean Seed</button>
+          </div>
+        </div>
+
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin: 1rem 0 0.5rem; color: #93c5fd;">
+          Table: `users` (Standard Accounts)
+        </h3>
+        <div style="overflow-x: auto; border: 1px solid var(--card-border); border-radius: 8px; margin-bottom: 1.5rem;">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Username</th><th>Password</th><th>Corporate Email</th><th>Role</th></tr>
+            </thead>
+            <tbody id="users-table-body">
+              <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading users...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin: 1rem 0 0.5rem; color: #fcd34d;">
+          Table: `admins` (Privileged Executive Secrets)
+        </h3>
+        <div style="overflow-x: auto; border: 1px solid var(--card-border); border-radius: 8px;">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Username</th><th>Root Password</th><th>Super Privilege</th><th>Cloud API Secret</th><th>Clearance</th></tr>
+            </thead>
+            <tbody id="admins-table-body">
+              <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Loading admins...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let isGuardActive = true;
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
+
+      if (tabId === 'threats') loadLogs();
+      if (tabId === 'database') loadDbData();
+    }
+
+    async function toggleGuard() {
+      const toggle = document.getElementById('guard-toggle');
+      try {
+        const res = await fetch('/soc/api/toggle-guard', { method: 'POST' });
+        const data = await res.json();
+        isGuardActive = data.guard_active;
+        toggle.checked = isGuardActive;
+
+        const statusText = document.getElementById('guard-status-text');
+        const statusSub = document.getElementById('guard-status-sub');
+        const statusPill = document.getElementById('status-pill');
+
+        if (isGuardActive) {
+          statusText.innerText = "Middleware Protection: ACTIVE";
+          statusSub.innerText = "TF-IDF Tokenizer & Logistic Regression AST interceptor active before SQLite execution.";
+          statusPill.className = "badge-pill badge-passed";
+          statusPill.innerText = "GUARD ONLINE";
+        } else {
+          statusText.innerText = "Middleware Protection: BYPASSED (UNPROTECTED)";
+          statusSub.innerText = "Warning: Requests execute raw SQL directly on the SQLite database!";
+          statusPill.className = "badge-pill badge-blocked";
+          statusPill.innerText = "GUARD DISABLED";
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function fireAttack(username, password) {
+      const consoleBox = document.getElementById('simulator-console');
+      consoleBox.innerHTML = `<span style="color: #60a5fa;">[*] Transmitting attack payload to POST /login...</span><br><code>Payload: username=${username}&password=${password}</code>`;
+
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
+
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        });
+
+        const status = response.status;
+        const text = await response.text();
+
+        if (status === 403) {
+          consoleBox.innerHTML += `<br><span style="color: #ef4444; font-weight: bold;">[⛔ INTERCEPTED] HTTP 403 Forbidden!</span> CloudDatabaseGuard ML blocked the attack before database touch. Telemetry logged to security_audit.json.`;
+        } else if (status === 200) {
+          if (text.includes("Multi-Row Result Set") || text.includes("RootMasterKey") || text.includes("sec_live_")) {
+            consoleBox.innerHTML += `<br><span style="color: #f59e0b; font-weight: bold;">[⚠️ EXPLOIT SUCCEEDED] HTTP 200 OK!</span> AI Middleware was OFF. Raw SQL executed and dumped database rows!`;
+          } else {
+            consoleBox.innerHTML += `<br><span style="color: #10b981;">[HTTP 200 OK]</span> Request completed.`;
+          }
+        }
+        loadLogs();
+      } catch (e) {
+        consoleBox.innerHTML += `<br><span style="color: #ef4444;">Error: ${e.message}</span>`;
+      }
+    }
+
+    async function loadLogs() {
+      try {
+        const res = await fetch('/soc/api/logs');
+        const logs = await res.json();
+        const tbody = document.getElementById('logs-table-body');
+        document.getElementById('log-count-badge').innerText = logs.length;
+
+        if (logs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No attack events logged yet. Trigger an attack in the simulator!</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = logs.map(l => {
+          const isBlocked = l.status === 'BLOCKED_403';
+          const badge = isBlocked ? '<span class="badge-pill badge-blocked">BLOCKED 403</span>' : '<span class="badge-pill badge-passed">ALLOWED</span>';
+          const score = typeof l.confidence_score === 'number' ? (l.confidence_score * 100).toFixed(1) + '%' : l.confidence_score;
+          return `
+            <tr>
+              <td class="mono" style="font-size: 0.75rem; color: #9ca3af;">${l.timestamp}</td>
+              <td>${badge}</td>
+              <td style="font-weight: 600; color: #fca5a5;">${l.threat_type || 'SQL Injection'}</td>
+              <td class="mono" style="color: #fcd34d; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${l.payload}">${l.payload}</td>
+              <td class="mono" style="font-weight: 700; color: #ef4444;">${score}</td>
+              <td class="mono" style="color: #60a5fa;">${l.latency_ms} ms</td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadDbData() {
+      try {
+        const res = await fetch('/soc/api/db-data');
+        const data = await res.json();
+
+        // Users Table
+        const uBody = document.getElementById('users-table-body');
+        if (data.users.length === 0) {
+          uBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#f87171; padding: 1.5rem;">⚠️ Table 'users' has been dropped or is empty!</td></tr>`;
+        } else {
+          uBody.innerHTML = data.users.map(u => `
+            <tr>
+              <td class="mono">${u.id}</td>
+              <td class="mono" style="color: #93c5fd; font-weight: 600;">${u.username}</td>
+              <td class="mono">${u.password}</td>
+              <td>${u.email}</td>
+              <td><span class="badge-pill" style="background:#1e293b; color:#cbd5e1;">${u.role}</span></td>
+            </tr>
+          `).join('');
+        }
+
+        // Admins Table
+        const aBody = document.getElementById('admins-table-body');
+        aBody.innerHTML = data.admins.map(a => `
+          <tr>
+            <td class="mono">${a.id}</td>
+            <td class="mono" style="color: #fcd34d; font-weight: 600;">${a.username}</td>
+            <td class="mono" style="color: #fca5a5;">${a.password}</td>
+            <td class="mono">${a.super_privilege}</td>
+            <td class="mono" style="color: #93c5fd;">${a.api_secret}</td>
+            <td><span class="badge-pill" style="background:#1e1b4b; color:#a5b4fc;">${a.clearance_level}</span></td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function resetDb() {
+      if (!confirm("Reset database to initial clean corporate dummy records?")) return;
+      try {
+        await fetch('/soc/api/reset-db', { method: 'POST' });
+        loadDbData();
+        alert("Database successfully reset!");
+      } catch (err) {
+        alert("Error resetting database.");
+      }
+    }
+
+    // Initial load
+    loadLogs();
+  </script>
+</body>
+</html>

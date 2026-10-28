@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Gateway | Apex Cloud Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f3f4f6;
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1e3a8a;
+    }
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      background: #2563eb;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+    .container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .login-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      width: 100%;
+      max-width: 420px;
+      padding: 2.25rem;
+    }
+    .login-header {
+      margin-bottom: 1.75rem;
+      text-align: center;
+    }
+    .login-header h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.35rem;
+    }
+    .login-header p {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    label {
+      display: block;
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.4rem;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: #111827;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 0.75rem;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-top: 0.5rem;
+    }
+    .btn-submit:hover {
+      background: #1d4ed8;
+    }
+    .error-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-bottom: 1.25rem;
+      color: #991b1b;
+      font-size: 0.825rem;
+    }
+    .footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      border-top: 1px solid #e5e7eb;
+      background: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <div class="brand-icon">A</div>
+      <span>Apex Enterprise Cloud</span>
+    </div>
+    <div style="font-size: 0.8rem; color: #6b7280;">Single Sign-On (SSO) Portal</div>
+  </header>
+
+  <main class="container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>Sign In to Your Workspace</h1>
+        <p>Enter your corporate credentials to continue</p>
+      </div>
+
+      {% if error_msg %}
+      <div class="error-box">
+        {{ error_msg }}
+      </div>
+      {% endif %}
+
+      <form action="/login" method="POST">
+        <div class="form-group">
+          <label for="username">Corporate ID / Username</label>
+          <input type="text" id="username" name="username" placeholder="e.g. alice_dev" required autofocus value="{{ username or '' }}">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••••••" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Sign In</button>
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    &copy; 2026 Apex Global Systems Inc. All rights reserved. Authorized employee access only.
+  </footer>
+</body>
+</html>

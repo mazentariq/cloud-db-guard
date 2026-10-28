@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>403 Forbidden - Request Blocked</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      max-width: 520px;
+      width: 100%;
+      padding: 2.5rem;
+      text-align: center;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      margin-bottom: 1.25rem;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.75rem;
+    }
+    p {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+    .footer-ref {
+      font-size: 0.75rem;
+      color: #64748b;
+      border-top: 1px solid #334155;
+      padding-top: 1.25rem;
+      font-family: monospace;
+    }
+    .btn {
+      display: inline-block;
+      background: #3b82f6;
+      color: white;
+      text-decoration: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .btn:hover {
+      background: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">HTTP 403 Forbidden</span>
+    <h1>Access Denied by Security Middleware</h1>
+    <p>
+      Your request was intercepted and blocked due to anomalous syntax vectors matching known SQL injection attack patterns. The target database was protected from unauthorized execution.
+    </p>
+    <div style="margin-bottom: 1.5rem;">
+      <a href="/" class="btn">Return to Portal</a>
+    </div>
+    <div class="footer-ref">
+      Event ID: {{ event_id or "SEC-GATE-BLOCKED" }} &bull; Timestamp: {{ timestamp or "Now" }}
+    </div>
+  </div>
+</body>
+</html>

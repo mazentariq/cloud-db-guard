@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Console Dashboard | Authenticated Session</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --border: #1f2937;
+      --accent: #3b82f6;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --text: #f9fafb;
+      --text-muted: #9ca3af;
+      --code-bg: #030712;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(17, 24, 39, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .code-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #93c5fd;
+      overflow-x: auto;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.6rem 1.25rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-outline {
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover { background: rgba(255, 255, 255, 0.05); }
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span style="font-weight: 800; font-size: 1.1rem;">🛡️ CloudDatabaseGuard</span>
+      <span class="badge badge-success">Session Active</span>
+    </div>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <a href="/soc-logs" class="btn btn-outline">SOC Logs</a>
+      <a href="/" class="btn btn-danger">Log Out</a>
+    </div>
+  </header>
+
+  <main class="container">
+    {% if is_exploited %}
+    <div style="background: rgba(239, 68, 68, 0.15); border: 2px solid #ef4444; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+        <span style="font-size: 1.5rem;">⚠️</span>
+        <h2 style="font-size: 1.25rem; color: #f87171; font-weight: 700;">
+          SECURITY WARNING: SQL Injection Exploit Succeeded (AI Middleware was DISABLED)
+        </h2>
+      </div>
+      <p style="font-size: 0.9rem; color: #fecaca; line-height: 1.5;">
+        Because the AI Security Middleware was bypassed, raw SQL concatenation executed directly on the SQLite database.
+        The attacker hijacked the session or dumped unauthorized rows from tables (including <code>admins</code>)!
+      </p>
+    </div>
+    {% endif %}
+
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: start;">
+        <div>
+          <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem;">
+            Welcome, {{ user.username if user else "Authenticated Entity" }}
+          </h1>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Account Role: <span class="badge {% if user and ('admin' in user.username or user.super_privilege) %}badge-danger{% else %}badge-success{% endif %}">
+              {{ user.role if (user and user.role) else ("SUPERADMIN PRIVILEGE" if (user and user.super_privilege) else "Standard User") }}
+            </span>
+          </p>
+        </div>
+        <span class="badge badge-success">Database Connected</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;">
+        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);">
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">User ID</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; margin-top: 0.25rem;">
+            {{ user.id if user else "1" }}
+          </div>
+        </div>
+        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);">
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Email / Identity</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; margin-top: 0.25rem; color: #93c5fd;">
+            {{ user.email if (user and user.email) else (user.clearance_level if (user and user.clearance_level) else "internal@cloudcorp.io") }}
+          </div>
+        </div>
+        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);">
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Clearance / Secret Key</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-top: 0.25rem; color: #fbbf24;">
+            {{ user.api_secret if (user and user.api_secret) else "Standard Key Vault" }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Raw SQL Audit Inspector -->
+    <div class="card">
+      <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; color: #e5e7eb;">
+        🔍 Executed Raw Database Query
+      </h2>
+      <div class="code-box">{{ executed_query or "SELECT * FROM users WHERE username='alice_dev' AND password='...'" }}</div>
+
+      {% if returned_records and returned_records|length > 1 %}
+      <div style="margin-top: 1.5rem;">
+        <h3 style="font-size: 0.95rem; font-weight: 700; color: #f87171; margin-bottom: 0.5rem;">
+          Exfiltrated Query Result Set ({{ returned_records|length }} rows returned by SQLite):
+        </h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Col 1 (ID)</th>
+              <th>Col 2 (Username)</th>
+              <th>Col 3 (Password / Hash)</th>
+              <th>Col 4 (Email / Privileges)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in returned_records %}
+            <tr>
+              <td style="font-family: 'JetBrains Mono'; font-weight: 600;">{{ row[0] }}</td>
+              <td style="font-family: 'JetBrains Mono'; color: #93c5fd;">{{ row[1] }}</td>
+              <td style="font-family: 'JetBrains Mono'; color: #fca5a5;">{{ row[2] }}</td>
+              <td style="font-family: 'JetBrains Mono'; color: #fbbf24;">{{ row[3] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </main>
+</body>
+</html>

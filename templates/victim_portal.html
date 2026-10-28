@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Workspace Portal | Apex Cloud Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e3a8a;
+    }
+    .brand-icon {
+      width: 26px;
+      height: 26px;
+      background: #2563eb;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+    }
+    .btn-logout {
+      padding: 0.4rem 0.85rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #ffffff;
+      color: #475569;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-logout:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+    .container {
+      max-width: 1050px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+      width: 100%;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .info-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .info-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .info-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-top: 0.25rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    .dump-section {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .dump-header {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #9f1239;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #fecdd3;
+    }
+    th, td {
+      padding: 0.65rem 0.85rem;
+      text-align: left;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    th {
+      background: #ffe4e6;
+      color: #881337;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <div class="brand-icon">A</div>
+      <span>Apex Enterprise Cloud</span>
+    </div>
+    <div class="user-pill">
+      <span>Signed in as <strong>{{ user.username if user else "Employee" }}</strong></span>
+      <a href="/" class="btn-logout">Sign Out</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: start;">
+        <div>
+          <h1 style="font-size: 1.4rem; font-weight: 700; color: #0f172a;">
+            Welcome to Your Workspace, {{ user.username if user else "User" }}
+          </h1>
+          <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.2rem;">
+            Enterprise cloud productivity suite &bull; Account status: Active
+          </p>
+        </div>
+        <span class="badge">{{ user.role if (user and user.role) else "Standard Access" }}</span>
+      </div>
+
+      <div class="grid">
+        <div class="info-box">
+          <div class="info-label">Employee ID</div>
+          <div class="info-value mono">EMP-{{ user.id if user else "1001" }}</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">Corporate Email</div>
+          <div class="info-value" style="font-size: 0.9rem;">{{ user.email if (user and user.email) else "employee@apexcloud.internal" }}</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">Session Authority</div>
+          <div class="info-value mono" style="font-size: 0.85rem; color: #2563eb;">
+            {{ "ADMIN_ROOT" if (user and ("admin" in user.username or user.super_privilege)) else "STANDARD_TOKEN" }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- If raw SQL concatenation returned multiple rows (Vulnerability Exploit Demonstration) -->
+    {% if dumped_records and dumped_records|length > 1 %}
+    <div class="dump-section">
+      <div class="dump-header">
+        <span>⚠️ Raw Query Returned Multi-Row Result Set ({{ dumped_records|length }} Records)</span>
+      </div>
+      <p style="font-size: 0.8rem; color: #881337; margin-bottom: 0.75rem;">
+        Unfiltered result set dumped by database execution:
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Credential Hash / Password</th>
+            <th>Email / Privilege Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in dumped_records %}
+          <tr>
+            <td class="mono">{{ r[0] }}</td>
+            <td class="mono" style="font-weight: 600; color: #1e3a8a;">{{ r[1] }}</td>
+            <td class="mono" style="color: #9f1239;">{{ r[2] }}</td>
+            <td class="mono" style="color: #475569;">{{ r[3] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </main>
+</body>
+</html>

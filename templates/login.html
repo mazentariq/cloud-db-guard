@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Database Portal | Academic PoC Lab (Topic 21)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --border: #1f2937;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --danger: #ef4444;
+      --success: #10b981;
+      --text: #f9fafb;
+      --text-muted: #9ca3af;
+      --code-bg: #030712;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(17, 24, 39, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-primary { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+    p.subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #d1d5db; }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover { background: rgba(255, 255, 255, 0.05); }
+    .payload-chip {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.6rem;
+      background: rgba(31, 41, 55, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 0.4rem;
+      margin: 0.25rem 0.25rem 0.25rem 0;
+      cursor: pointer;
+      color: #93c5fd;
+      transition: all 0.15s;
+    }
+    .payload-chip:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: #60a5fa;
+      color: #fff;
+    }
+    .code-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .text-danger { color: #f87171; }
+    .text-success { color: #34d399; }
+    .text-warning { color: #fbbf24; }
+    .highlight { background: rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 0.1rem 0.3rem; border-radius: 0.2rem; }
+    .nav-links { display: flex; gap: 1rem; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; }
+    .nav-links a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span style="font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em;">🛡️ CloudDatabaseGuard</span>
+      <span class="badge badge-primary">Topic 21 Seminar PoC</span>
+    </div>
+    <nav class="nav-links">
+      <a href="/">Login Portal</a>
+      <a href="/soc-logs">SOC Telemetry & Logs</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Left Column: The Vulnerable Login Form -->
+    <section class="card">
+      <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+        <div>
+          <h1>Enterprise Cloud Gateway</h1>
+          <p class="subtitle">Authenticate with corporate credentials</p>
+        </div>
+        {% if guard_active %}
+        <span class="badge badge-success">🛡️ AI Proxy ACTIVE</span>
+        {% else %}
+        <span class="badge badge-danger">⚠️ RAW SQL UNPROTECTED</span>
+        {% endif %}
+      </div>
+
+      {% if error_msg %}
+      <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 0.5rem; padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 0.85rem; color: #fca5a5;">
+        <strong>Authentication Failed:</strong> {{ error_msg }}
+      </div>
+      {% endif %}
+
+      <form action="/login" method="POST">
+        <div class="form-group">
+          <label for="username">Username / Corporate ID</label>
+          <input type="text" id="username" name="username" placeholder="e.g. alice_dev" required autofocus value="{{ username or '' }}">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••••••" required value="{{ password or '' }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">
+          Authenticate & Submit Query
+        </button>
+      </form>
+
+      <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+        <label style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+          Toggle Protection for Live Demo:
+        </label>
+        <form action="/toggle-guard" method="POST" style="margin-top: 0.5rem;">
+          <input type="hidden" name="redirect" value="/">
+          <button type="submit" class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+            {% if guard_active %}
+            Turn OFF AI Middleware (Expose Vulnerability)
+            {% else %}
+            Turn ON AI Middleware (Activate CloudDatabaseGuard)
+            {% endif %}
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Right Column: Vulnerability Inspector & Seminar Demo Helper -->
+    <section class="card" style="background: #0d131f;">
+      <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; color: #93c5fd;">
+        🔬 Seminar PoC Lab Controls
+      </h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Click an attack payload below to inject it into the vulnerable login input.
+      </p>
+
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 0.8rem; font-weight: 600; color: #f87171; margin-bottom: 0.4rem;">
+          Attack Vectors (Malicious SQLi):
+        </div>
+        <div>
+          <button type="button" class="payload-chip" onclick="setPayload('admin\' OR 1=1 --', 'any')">
+            🎯 1. Auth Bypass (admin' OR 1=1 --)
+          </button>
+          <button type="button" class="payload-chip" onclick="setPayload('\' UNION SELECT id, username, password, super_privilege FROM admins --', 'any')">
+            🕵️ 2. UNION Exfiltration (Dump `admins`)
+          </button>
+          <button type="button" class="payload-chip" onclick="setPayload('\'; DROP TABLE users; --', 'any')">
+            💣 3. Stacked DDL (DROP TABLE users)
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 0.8rem; font-weight: 600; color: #34d399; margin-bottom: 0.4rem;">
+          Legitimate Input (Baseline):
+        </div>
+        <div>
+          <button type="button" class="payload-chip" style="color: #6ee7b7;" onclick="setPayload('alice_dev', 'P@ssword2026!')">
+            ✅ Valid User: alice_dev / P@ssword2026!
+          </button>
+        </div>
+      </div>
+
+      <div style="font-size: 0.8rem; font-weight: 600; color: #d1d5db; margin-bottom: 0.4rem;">
+        Target Backend Query Formulation:
+      </div>
+      <div class="code-box">
+        <span style="color: #60a5fa;"># Vulnerable concatenation in app.py:</span><br>
+        query = <span style="color: #f43f5e;">f"SELECT * FROM users WHERE username='<span id="preview-user" class="highlight">{username}</span>' AND password='<span id="preview-pwd" class="highlight">{password}</span>'"</span>
+      </div>
+
+      <div style="background: rgba(17, 24, 39, 0.7); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.75rem 1rem; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
+        <strong style="color: #e5e7eb;">Seminar Defense Architecture:</strong><br>
+        When <code>CloudDatabaseGuard</code> is <strong>ACTIVE</strong>, the request is intercepted before database invocation. The payload is parsed through token n-grams and TF-IDF regression weights, blocking malicious payloads with <strong>HTTP 403 Forbidden</strong> and logging the event in <a href="/soc-logs" style="color: #60a5fa;">SOC Logs</a>.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function setPayload(user, pwd) {
+      document.getElementById('username').value = user;
+      document.getElementById('password').value = pwd;
+      updatePreview();
+    }
+    function updatePreview() {
+      const u = document.getElementById('username').value || '{username}';
+      const p = document.getElementById('password').value || '{password}';
+      document.getElementById('preview-user').textContent = u;
+      document.getElementById('preview-pwd').textContent = p;
+    }
+    document.getElementById('username').addEventListener('input', updatePreview);
+    document.getElementById('password').addEventListener('input', updatePreview);
+    updatePreview();
+  </script>
+</body>
+</html>
